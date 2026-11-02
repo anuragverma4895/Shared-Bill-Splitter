@@ -29,7 +29,7 @@ pnpm test
 pnpm build
 ```
 
-**Verification status:** These commands have **not** been executed successfully in the authoring environment, which cannot resolve external hosts or install npm packages. Run all checks locally before submitting; fix any TypeScript/Biome/test issues and review all code. The original company tests were copied without changing their expectations.
+**Verification status:** The developer's local run on 2026-11-02 reported 24/24 original tests passing, TypeScript typechecking passing, and a successful Vite production build. Biome reported formatting/import-order errors and a CSS specificity warning. A follow-up CI workflow and additional edge-case tests have since been added; these later changes still require a fresh successful CI or local run. Use `pnpm check:fix` to apply Biome's safe formatting fixes, then rerun the commands above. Original company tests were preserved.
 
 ## Architecture
 
