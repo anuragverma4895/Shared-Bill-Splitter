@@ -1,0 +1,49 @@
+name: Verify and format
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Format and lint (apply safe fixes)
+        run: pnpm check:fix
+      - name: Commit formatting corrections
+        run: |
+          if ! git diff --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add README.md api/src web/src
+            git commit -m "style: apply Biome formatting and import fixes"
+            git push
+          fi
+      - name: Verify formatting
+        run: pnpm check
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Run tests
+        run: pnpm test
+      - name: Production build
+        run: pnpm build
